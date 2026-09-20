@@ -9,13 +9,12 @@ import com.up.peluqueria.exception.ConflictException;
 import com.up.peluqueria.exception.ResourceNotFoundException;
 import com.up.peluqueria.repository.PeluqueroRepository;
 import com.up.peluqueria.repository.TurnoRepository;
+import java.util.List;
+import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -29,8 +28,7 @@ public class PeluqueroService {
 
     @Transactional(readOnly = true)
     public List<PeluqueroResponseDTO> listarTodos() {
-        return peluqueroRepository.findAll()
-                .stream()
+        return peluqueroRepository.findAll().stream()
                 .map(this::convertirEntidadADtoResponse)
                 .collect(Collectors.toList());
     }
@@ -49,9 +47,8 @@ public class PeluqueroService {
                     "Ya existe un peluquero con el nombre '" + peluqueroRequestDTO.getName() + "'");
         }
 
-        Peluquero peluquero = Peluquero.builder()
-                .name(peluqueroRequestDTO.getName())
-                .build();
+        Peluquero peluquero =
+                Peluquero.builder().name(peluqueroRequestDTO.getName()).build();
 
         Peluquero peluqueroCreado = peluqueroRepository.save(peluquero);
         return convertirEntidadADtoResponse(peluqueroCreado);
@@ -94,7 +91,8 @@ public class PeluqueroService {
     }
 
     private Peluquero obtenerPeluqueroOrThrow(Long id) {
-        return peluqueroRepository.findById(id)
+        return peluqueroRepository
+                .findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Peluquero con id " + id + " no encontrado"));
     }
 
