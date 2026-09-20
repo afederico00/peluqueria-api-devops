@@ -47,7 +47,7 @@ class PeluqueroServiceTest {
         List<PeluqueroResponseDTO> resultado = peluqueroService.listarTodos();
 
         assertThat(resultado).hasSize(2);
-        assertThat(resultado.get(0).getName()).isEqualTo("Mateo");
+        assertThat(resultado.get(0).getName()).isEqualTo("Pedro");
     }
 
     @Test
