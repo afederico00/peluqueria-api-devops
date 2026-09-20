@@ -1,6 +1,9 @@
 package com.up.peluqueria.exception;
 
 import jakarta.servlet.http.HttpServletRequest;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -9,16 +12,13 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-
 @RestControllerAdvice
 @Slf4j
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(ResourceNotFoundException.class)
-    public ResponseEntity<ErrorResponse> handleResourceNotFoundException(ResourceNotFoundException ex, HttpServletRequest request) {
+    public ResponseEntity<ErrorResponse> handleResourceNotFoundException(
+            ResourceNotFoundException ex, HttpServletRequest request) {
         log.warn("ResourceNotFoundException - {} - detalle: {}", request.getRequestURI(), ex.getMessage());
 
         ErrorResponse error = ErrorResponse.builder()
@@ -63,9 +63,12 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<ErrorResponse> handleValidationErrors(MethodArgumentNotValidException ex, HttpServletRequest request) {
-        log.warn("MethodArgumentNotValidException - {} - campos invalidos: {}",
-                request.getRequestURI(), ex.getBindingResult().getFieldErrorCount());
+    public ResponseEntity<ErrorResponse> handleValidationErrors(
+            MethodArgumentNotValidException ex, HttpServletRequest request) {
+        log.warn(
+                "MethodArgumentNotValidException - {} - campos invalidos: {}",
+                request.getRequestURI(),
+                ex.getBindingResult().getFieldErrorCount());
 
         List<String> errores = new ArrayList<>();
         for (FieldError fieldError : ex.getBindingResult().getFieldErrors()) {

@@ -1,5 +1,10 @@
 package com.up.peluqueria.service;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
+
 import com.up.peluqueria.dto.request.PeluqueroRequestDTO;
 import com.up.peluqueria.dto.response.PeluqueroEliminadoResponseDTO;
 import com.up.peluqueria.dto.response.PeluqueroResponseDTO;
@@ -9,20 +14,14 @@ import com.up.peluqueria.exception.ConflictException;
 import com.up.peluqueria.exception.ResourceNotFoundException;
 import com.up.peluqueria.repository.PeluqueroRepository;
 import com.up.peluqueria.repository.TurnoRepository;
+import java.util.List;
+import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-
-import java.util.List;
-import java.util.Optional;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class PeluqueroServiceTest {
@@ -43,8 +42,7 @@ class PeluqueroServiceTest {
     @Test
     @DisplayName("listarTodos devuelve todos los peluqueros mapeados a DTO")
     void listarTodos_devuelveLista() {
-        when(peluqueroRepository.findAll())
-                .thenReturn(List.of(peluquero(1L, "Mateo"), peluquero(2L, "Tobias")));
+        when(peluqueroRepository.findAll()).thenReturn(List.of(peluquero(1L, "Mateo"), peluquero(2L, "Tobias")));
 
         List<PeluqueroResponseDTO> resultado = peluqueroService.listarTodos();
 

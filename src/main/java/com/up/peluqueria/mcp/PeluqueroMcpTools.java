@@ -4,11 +4,10 @@ import com.up.peluqueria.dto.request.PeluqueroRequestDTO;
 import com.up.peluqueria.dto.response.PeluqueroEliminadoResponseDTO;
 import com.up.peluqueria.dto.response.PeluqueroResponseDTO;
 import com.up.peluqueria.service.PeluqueroService;
+import java.util.List;
 import org.springframework.ai.mcp.annotation.McpTool;
 import org.springframework.ai.mcp.annotation.McpToolParam;
 import org.springframework.stereotype.Component;
-
-import java.util.List;
 
 @Component
 public class PeluqueroMcpTools {
@@ -45,10 +44,15 @@ public class PeluqueroMcpTools {
         return peluqueroService.actualizar(id, dto);
     }
 
-    @McpTool(description = "Elimina un peluquero por ID. Si tiene turnos asociados, debe indicarse confirmar=true para aceptarlo.")
+    @McpTool(
+            description =
+                    "Elimina un peluquero por ID. Si tiene turnos asociados, debe indicarse confirmar=true para aceptarlo.")
     public PeluqueroEliminadoResponseDTO eliminar_peluquero(
             @McpToolParam(description = "ID del peluquero a eliminar.", required = true) Long id,
-            @McpToolParam(description = "Confirma la eliminación cuando el peluquero tiene turnos asociados.", required = false) Boolean confirmar) {
+            @McpToolParam(
+                            description = "Confirma la eliminación cuando el peluquero tiene turnos asociados.",
+                            required = false)
+                    Boolean confirmar) {
         return peluqueroService.eliminar(id, Boolean.TRUE.equals(confirmar));
     }
 }

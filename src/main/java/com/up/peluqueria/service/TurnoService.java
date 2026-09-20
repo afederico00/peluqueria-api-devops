@@ -11,11 +11,6 @@ import com.up.peluqueria.exception.BadRequestException;
 import com.up.peluqueria.exception.ResourceNotFoundException;
 import com.up.peluqueria.repository.PeluqueroRepository;
 import com.up.peluqueria.repository.TurnoRepository;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
@@ -23,13 +18,17 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Slf4j
 public class TurnoService {
 
-    private static final int HORA_APERTURA_MIN = 9 * 60;       // 09:00
-    private static final int HORA_CIERRE_MIN = 17 * 60 + 30;   // 17:30
+    private static final int HORA_APERTURA_MIN = 9 * 60; // 09:00
+    private static final int HORA_CIERRE_MIN = 17 * 60 + 30; // 17:30
 
     @Autowired
     private TurnoRepository turnoRepository;
@@ -39,8 +38,7 @@ public class TurnoService {
 
     @Transactional(readOnly = true)
     public List<TurnoResponseDTO> listarTodos() {
-        return turnoRepository.findAllByOrderByFechaAscHoraAsc()
-                .stream()
+        return turnoRepository.findAllByOrderByFechaAscHoraAsc().stream()
                 .map(this::convertirEntidadADtoResponse)
                 .collect(Collectors.toList());
     }
@@ -56,7 +54,8 @@ public class TurnoService {
     public TurnoResponseDTO crear(TurnoRequestDTO turnoRequestDTO) {
         EstadoTurno estadoTurno = validarDatosTurno(turnoRequestDTO);
 
-        Peluquero peluquero = peluqueroRepository.findById(turnoRequestDTO.getPeluqueroId())
+        Peluquero peluquero = peluqueroRepository
+                .findById(turnoRequestDTO.getPeluqueroId())
                 .orElseThrow(() -> new ResourceNotFoundException(
                         "Peluquero con id " + turnoRequestDTO.getPeluqueroId() + " no encontrado"));
 
@@ -81,7 +80,8 @@ public class TurnoService {
 
         Turno turnoExistente = obtenerTurnoOrThrow(id);
 
-        Peluquero peluquero = peluqueroRepository.findById(turnoRequestDTO.getPeluqueroId())
+        Peluquero peluquero = peluqueroRepository
+                .findById(turnoRequestDTO.getPeluqueroId())
                 .orElseThrow(() -> new ResourceNotFoundException(
                         "Peluquero con id " + turnoRequestDTO.getPeluqueroId() + " no encontrado"));
 
@@ -118,10 +118,10 @@ public class TurnoService {
                 turnoRequestDTO.getHora(),
                 EstadoTurno.RESERVADO);
 
-        if (reservado.isPresent() && (idTurnoActual == null || !reservado.get().getId().equals(idTurnoActual))) {
-            throw new BadRequestException(
-                    "El peluquero ya tiene un turno RESERVADO el " + turnoRequestDTO.getFecha()
-                            + " a las " + turnoRequestDTO.getHora());
+        if (reservado.isPresent()
+                && (idTurnoActual == null || !reservado.get().getId().equals(idTurnoActual))) {
+            throw new BadRequestException("El peluquero ya tiene un turno RESERVADO el " + turnoRequestDTO.getFecha()
+                    + " a las " + turnoRequestDTO.getHora());
         }
     }
 
@@ -153,8 +153,7 @@ public class TurnoService {
         int mm = Integer.parseInt(partesHora[1]);
 
         if (mm != 0 && mm != 30) {
-            throw new BadRequestException(
-                    "Los turnos solo pueden reservarse en punto o y media (ej: 12:00 o 12:30)");
+            throw new BadRequestException("Los turnos solo pueden reservarse en punto o y media (ej: 12:00 o 12:30)");
         }
 
         int totalMin = hh * 60 + mm;
@@ -165,9 +164,8 @@ public class TurnoService {
         boolean estadoValido = Arrays.stream(EstadoTurno.values())
                 .anyMatch(estado -> estado.name().equals(dto.getEstadoTurno()));
         if (!estadoValido) {
-            String estadosValidos = Arrays.stream(EstadoTurno.values())
-                    .map(Enum::name)
-                    .collect(Collectors.joining(", "));
+            String estadosValidos =
+                    Arrays.stream(EstadoTurno.values()).map(Enum::name).collect(Collectors.joining(", "));
             throw new BadRequestException("El estadoTurno debe ser uno de: " + estadosValidos);
         }
 
@@ -179,7 +177,8 @@ public class TurnoService {
     }
 
     private Turno obtenerTurnoOrThrow(Long id) {
-        return turnoRepository.findById(id)
+        return turnoRepository
+                .findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Turno con id " + id + " no encontrado"));
     }
 
