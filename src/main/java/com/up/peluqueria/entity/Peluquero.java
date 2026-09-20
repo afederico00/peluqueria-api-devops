@@ -18,7 +18,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-@JsonPropertyOrder({ "id", "name" })
+@JsonPropertyOrder({"id", "name"})
 public class Peluquero {
 
     @Id

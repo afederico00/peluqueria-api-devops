@@ -22,7 +22,10 @@ public class TurnoResponseDTO {
     @Schema(description = "Hora del turno en formato HH:MM", example = "10:30")
     private String hora;
 
-    @Schema(description = "Estado del turno", example = "RESERVADO", allowableValues = { "RESERVADO", "FINALIZADO" })
+    @Schema(
+            description = "Estado del turno",
+            example = "RESERVADO",
+            allowableValues = {"RESERVADO", "FINALIZADO"})
     private String estadoTurno;
 
     @Schema(description = "ID del peluquero asignado al turno", example = "1")

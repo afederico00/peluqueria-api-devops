@@ -23,7 +23,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-@JsonPropertyOrder({ "id", "fecha", "hora", "estadoTurno", "peluquero" })
+@JsonPropertyOrder({"id", "fecha", "hora", "estadoTurno", "peluquero"})
 public class Turno {
 
     @Id

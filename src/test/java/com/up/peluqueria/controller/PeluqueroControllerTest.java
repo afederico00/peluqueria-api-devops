@@ -1,10 +1,17 @@
 package com.up.peluqueria.controller;
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
 import com.up.peluqueria.dto.response.PeluqueroResponseDTO;
 import com.up.peluqueria.exception.ConflictException;
 import com.up.peluqueria.exception.GlobalExceptionHandler;
 import com.up.peluqueria.exception.ResourceNotFoundException;
 import com.up.peluqueria.service.PeluqueroService;
+import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -15,14 +22,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-
-import java.util.List;
-
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @ExtendWith(MockitoExtension.class)
 class PeluqueroControllerTest {
@@ -45,8 +44,7 @@ class PeluqueroControllerTest {
     @Test
     @DisplayName("GET /api/peluqueros responde 200 con la lista")
     void listarTodos_200() throws Exception {
-        when(peluqueroService.listarTodos())
-                .thenReturn(List.of(new PeluqueroResponseDTO(1L, "Mateo")));
+        when(peluqueroService.listarTodos()).thenReturn(List.of(new PeluqueroResponseDTO(1L, "Mateo")));
 
         mockMvc.perform(get("/api/peluqueros"))
                 .andExpect(status().isOk())
@@ -93,7 +91,6 @@ class PeluqueroControllerTest {
         when(peluqueroService.eliminar(1L, false))
                 .thenThrow(new ConflictException("El peluquero tiene 2 turnos asociados."));
 
-        mockMvc.perform(delete("/api/peluqueros/1"))
-                .andExpect(status().isConflict());
+        mockMvc.perform(delete("/api/peluqueros/1")).andExpect(status().isConflict());
     }
 }

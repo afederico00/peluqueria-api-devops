@@ -14,18 +14,23 @@ import lombok.NoArgsConstructor;
 public class TurnoRequestDTO {
 
     @NotBlank(message = "La fecha es requerida")
-    @Schema(description = "Fecha del turno en formato YYYY-MM-DD. Solo se aceptan turnos de martes a sábado.",
+    @Schema(
+            description = "Fecha del turno en formato YYYY-MM-DD. Solo se aceptan turnos de martes a sábado.",
             example = "2025-06-17")
     private String fecha;
 
     @NotBlank(message = "La hora es requerida")
-    @Schema(description = "Hora del turno en formato HH:MM, entre 09:00 y 17:30, en punto o y media (ej: 10:00, 10:30).",
+    @Schema(
+            description =
+                    "Hora del turno en formato HH:MM, entre 09:00 y 17:30, en punto o y media (ej: 10:00, 10:30).",
             example = "10:30")
     private String hora;
 
     @NotBlank(message = "El estado del turno es requerido")
-    @Schema(description = "Estado del turno. RESERVADO: horario ocupado/pendiente. FINALIZADO: turno ya realizado.",
-            example = "RESERVADO", allowableValues = { "RESERVADO", "FINALIZADO" })
+    @Schema(
+            description = "Estado del turno. RESERVADO: horario ocupado/pendiente. FINALIZADO: turno ya realizado.",
+            example = "RESERVADO",
+            allowableValues = {"RESERVADO", "FINALIZADO"})
     private String estadoTurno;
 
     @NotNull(message = "El id del peluquero es requerido")
