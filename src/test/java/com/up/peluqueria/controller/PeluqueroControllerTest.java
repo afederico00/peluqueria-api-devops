@@ -11,6 +11,7 @@ import com.up.peluqueria.exception.ConflictException;
 import com.up.peluqueria.exception.GlobalExceptionHandler;
 import com.up.peluqueria.exception.ResourceNotFoundException;
 import com.up.peluqueria.service.PeluqueroService;
+import jakarta.servlet.http.HttpServletRequest;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -19,9 +20,13 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 @ExtendWith(MockitoExtension.class)
 class PeluqueroControllerTest {
@@ -92,5 +97,28 @@ class PeluqueroControllerTest {
                 .thenThrow(new ConflictException("El peluquero tiene 2 turnos asociados."));
 
         mockMvc.perform(delete("/api/peluqueros/1")).andExpect(status().isConflict());
+    }
+
+    @Test
+    @DisplayName("GET /api/ruta-inexistente responde 404")
+    void rutaInexistente_404() throws Exception {
+        MockMvc mockMvcConRecursos = MockMvcBuilders.standaloneSetup(peluqueroController, new CatchAllController())
+                .setControllerAdvice(new GlobalExceptionHandler())
+                .build();
+
+        mockMvcConRecursos.perform(get("/api/ruta-inexistente")).andExpect(status().isNotFound());
+    }
+
+    /**
+     * Simula el ResourceHttpRequestHandler que Spring Boot registra por defecto
+     * para rutas sin controlador asociado, lanzando NoResourceFoundException.
+     */
+    @RestController
+    static class CatchAllController {
+
+        @GetMapping("/**")
+        public void handle(HttpServletRequest request) throws NoResourceFoundException {
+            throw new NoResourceFoundException(HttpMethod.GET, request.getRequestURI(), request.getRequestURI());
+        }
     }
 }
