@@ -1,0 +1,48 @@
+name: Deploy
+
+on:
+  workflow_call:
+    inputs:
+      version:
+        description: Version SemVer de la imagen a desplegar (ej. 1.1.0)
+        required: true
+        type: string
+  workflow_dispatch:
+    inputs:
+      version:
+        description: Version SemVer de la imagen a desplegar (ej. 1.1.0)
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+    name: Deploy a Render
+    runs-on: ubuntu-latest
+    environment:
+      name: production
+      url: ${{ vars.RENDER_SERVICE_URL }}
+    env:
+      IMAGE: docker.io/${{ vars.DOCKERHUB_USERNAME }}/peluqueria-api:${{ inputs.version }}
+    steps:
+      - name: Validar formato de la version
+        env:
+          VERSION: ${{ inputs.version }}
+        run: |
+          if ! [[ "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "::error::Version invalida: '$VERSION' (se espera X.Y.Z)"
+            exit 1
+          fi
+
+      - name: Verificar que la imagen exista en Docker Hub
+        run: docker manifest inspect "$IMAGE" > /dev/null
+
+      - name: Disparar deploy hook con la version exacta
+        env:
+          RENDER_DEPLOY_HOOK: ${{ secrets.RENDER_DEPLOY_HOOK }}
+        run: |
+          echo "Desplegando $IMAGE en Render"
+          IMG_URL=$(jq -rn --arg v "$IMAGE" '$v|@uri')
+          curl -fsS -X POST "${RENDER_DEPLOY_HOOK}&imgURL=${IMG_URL}"
