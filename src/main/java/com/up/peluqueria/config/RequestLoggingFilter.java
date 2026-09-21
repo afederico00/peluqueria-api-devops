@@ -35,4 +35,9 @@ public class RequestLoggingFilter extends OncePerRequestFilter {
                     kv("duration_ms", durationMs));
         }
     }
+
+    @Override
+    protected boolean shouldNotFilter(HttpServletRequest request) {
+        return request.getRequestURI().startsWith("/actuator");
+    }
 }
