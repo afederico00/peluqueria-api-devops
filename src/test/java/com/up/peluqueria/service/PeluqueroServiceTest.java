@@ -58,7 +58,7 @@ class PeluqueroServiceTest {
         PeluqueroResponseDTO resultado = peluqueroService.buscarPorId(1L);
 
         assertThat(resultado.getId()).isEqualTo(1L);
-        assertThat(resultado.getName()).isEqualTo("Mateo");
+        assertThat(resultado.getName()).isEqualTo("Pedro");
     }
 
     @Test
